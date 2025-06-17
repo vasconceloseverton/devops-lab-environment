@@ -1,12 +1,13 @@
 import requests
 import time
+import os
 
-# ✅ Configurações
-URL_TO_CHECK = "https://infra-simulada-devops.onrender.com/health"
-CHECK_INTERVAL = 60  # segundos
+URL_TO_CHECK = os.getenv("URL_TO_CHECK")
+CHECK_INTERVAL = int(os.getenv("CHECK_INTERVAL", 60))
 
-TELEGRAM_TOKEN = "SEU_TOKEN_AQUI"
-TELEGRAM_CHAT_ID = "SEU_CHAT_ID_AQUI"
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
 
 def send_telegram_message(message):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -22,6 +23,7 @@ def send_telegram_message(message):
     except Exception as e:
         print(f"Erro na conexão com Telegram: {e}")
 
+
 def check_health():
     try:
         response = requests.get(URL_TO_CHECK, timeout=5)
@@ -33,6 +35,7 @@ def check_health():
     except Exception as e:
         print(f"❌ Erro na requisição: {e}")
         send_telegram_message(f"🚨 Healthcheck ERROR: {URL_TO_CHECK}\nErro: {e}")
+
 
 if __name__ == "__main__":
     while True:
